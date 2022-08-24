@@ -1,0 +1,35 @@
+version: "3.8"
+services:
+    #container php
+    app:
+        build: 
+            args: 
+                user: php-56
+                uid: 1000
+            context: ./
+            dockerfile: Dockerfile
+        container_name: b-docker-app
+        restart: unless-stopped
+        working_dir: /var/www/
+        volumes:
+            - ./:/var/www
+        networks: 
+            - b-docker-php5
+    
+    #container nginx
+    nginx:
+        image: nginx:alpine
+        container_name: b-docker-nginx
+        restart: unless-stopped
+        ports: 
+            - 8081:80
+            - 443:443
+        volumes: 
+            - ./:/var/www
+            - ./docker/nginx/:/etc/nginx/conf.d/
+        networks: 
+            - b-docker-php5
+
+networks: 
+    b-docker-php5:
+        driver: bridge
